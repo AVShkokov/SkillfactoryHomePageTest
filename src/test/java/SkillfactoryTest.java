@@ -1,6 +1,8 @@
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -8,7 +10,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 
 import java.time.Duration;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SkillfactoryTest {
     private WebDriver driver;
@@ -163,7 +165,7 @@ public class SkillfactoryTest {
 
     @Test
     public void SkillfactoryHomePageHigherEducationHeaderTest() {
-        String item_xpath = "//*[@id=\"rec720455715\"]/div/div/div/section/div/h2";
+        String item_xpath = "/html/body/div[4]/div/div/div/section/div/h2";
         String name = "Помогаем получить высшее образование в IT — онлайн";
 
         openPage();
@@ -214,6 +216,195 @@ public class SkillfactoryTest {
 
         System.out.println(title_for_test);
         assertEquals(title_for_test, title);
+    }
+
+    @Test
+    public void SkillfactoryHomePageNameFieldPlaceholderTest() {
+        String item_selector = "#form625408054>div.t-form__inputsbox>div.t-input-group.t-input-group_nm>div>input";
+        String placeholder = "Имя";
+
+        openPage();
+
+        SkillfactoryHomePageItem name_field_placeholder = new SkillfactoryHomePageItem(driver);
+        WebElement item_for_test = name_field_placeholder.getSkillfactoryHomePageItemBySelector(item_selector);
+        String placeholder_for_test = item_for_test.getAttribute("placeholder");
+
+        System.out.println(placeholder_for_test);
+        assertEquals(placeholder_for_test, placeholder);
+    }
+
+    @Test
+    public void SkillfactoryHomePageEmailFieldPlaceholderTest() {
+        String item_selector = "#form625408054>div.t-form__inputsbox>div.t-input-group.t-input-group_em>div>input";
+        String placeholder = "Почта";
+
+        openPage();
+
+        SkillfactoryHomePageItem name_field_placeholder = new SkillfactoryHomePageItem(driver);
+        WebElement item_for_test = name_field_placeholder.getSkillfactoryHomePageItemBySelector(item_selector);
+        String placeholder_for_test = item_for_test.getAttribute("placeholder");
+
+        System.out.println(placeholder_for_test);
+        assertEquals(placeholder_for_test, placeholder);
+    }
+
+    @Test
+    public void SkillfactoryHomePagePhoneFieldPlaceholderTest() {
+        String item_selector = "#input_1676828667932";
+        String placeholder = "(999) 999-99-99";
+
+        openPage();
+
+        SkillfactoryHomePageItem name_field_placeholder = new SkillfactoryHomePageItem(driver);
+        WebElement item_for_test = name_field_placeholder.getSkillfactoryHomePageItemBySelector(item_selector);
+        String placeholder_for_test = item_for_test.getAttribute("placeholder");
+
+        System.out.println(placeholder_for_test);
+        assertEquals(placeholder_for_test, placeholder);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"Anton", "Антон", "Y", "Ю", "Иван Иванов", "Д'Артаньян"})
+    public void SkillfactoryHomePageNameFieldPositiveInputTest(String argument) {
+        String item_selector = "#form625408054>div.t-form__inputsbox>div.t-input-group.t-input-group_nm>div>input";
+        String item_selector_with_error = "/html/body/div[16]/div/div/div[7]/div[1]/form/div[2]/div[1]/div/div";
+        String button_selector = "#form625408054>div.t-form__inputsbox>div.tn-form__submit>button";
+
+        openPage();
+
+        SkillfactoryHomePageItem name_field_input = new SkillfactoryHomePageItem(driver);
+        WebElement item_for_test = name_field_input.getSkillfactoryHomePageItemBySelector(item_selector);
+        item_for_test.clear();
+        item_for_test.sendKeys(argument);
+
+        WebElement button_for_test = name_field_input.getSkillfactoryHomePageItemBySelector(button_selector);
+        button_for_test.click();
+
+        WebElement item_with_error = name_field_input.getSkillfactoryHomePageItemByXPath(item_selector_with_error);
+        String message = item_with_error.getText();
+
+        System.out.println(message);
+        assertTrue(message.isBlank());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"4nton", "Ант0н", "1", "@", "", " "})
+    public void SkillfactoryHomePageNameFieldNegativeInputTest(String argument) {
+        String item_selector = "#form625408054>div.t-form__inputsbox>div.t-input-group.t-input-group_nm>div>input";
+        String item_selector_with_error = "/html/body/div[16]/div/div/div[7]/div[1]/form/div[2]/div[1]/div/div";
+        String button_selector = "#form625408054>div.t-form__inputsbox>div.tn-form__submit>button";
+
+        openPage();
+
+        SkillfactoryHomePageItem name_field_input = new SkillfactoryHomePageItem(driver);
+        WebElement item_for_test = name_field_input.getSkillfactoryHomePageItemBySelector(item_selector);
+        item_for_test.clear();
+        item_for_test.sendKeys(argument);
+
+        WebElement button_for_test = name_field_input.getSkillfactoryHomePageItemBySelector(button_selector);
+        button_for_test.click();
+
+        WebElement item_with_error = name_field_input.getSkillfactoryHomePageItemByXPath(item_selector_with_error);
+        String message = item_with_error.getText();
+
+        System.out.println(message);
+        assertFalse(message.isBlank());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"test@email.ru", "TEST@EMAIL.RU", "test1@email.ru", "1test@email.ru", "test@email1.ru", "te-st@email.ru", "test@e-mail.ru", "t_est@email.ru", "t.est@email.ru"})
+    public void SkillfactoryHomePageEmailFieldPositiveInputTest(String argument) {
+        String item_selector = "#form625408054>div.t-form__inputsbox>div.t-input-group.t-input-group_em>div>input";
+        String item_selector_with_error = "/html/body/div[16]/div/div/div[7]/div[1]/form/div[2]/div[2]/div/div";
+        String button_selector = "#form625408054>div.t-form__inputsbox>div.tn-form__submit>button";
+
+        openPage();
+
+        SkillfactoryHomePageItem name_field_input = new SkillfactoryHomePageItem(driver);
+        WebElement item_for_test = name_field_input.getSkillfactoryHomePageItemBySelector(item_selector);
+        item_for_test.clear();
+        item_for_test.sendKeys(argument);
+
+        WebElement button_for_test = name_field_input.getSkillfactoryHomePageItemBySelector(button_selector);
+        button_for_test.click();
+
+        WebElement item_with_error = name_field_input.getSkillfactoryHomePageItemByXPath(item_selector_with_error);
+        String message = item_with_error.getText();
+
+        System.out.println(message);
+        assertTrue(message.isBlank());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"", "test@emailru", "testemail.ru", "testemailru", "t est@email.ru", "test@e mail.ru", "test@e_mail.ru", "test@email..ru"})
+    public void SkillfactoryHomePageEmailFieldNegativeInputTest(String argument) {
+        String item_selector = "#form625408054>div.t-form__inputsbox>div.t-input-group.t-input-group_em>div>input";
+        String item_selector_with_error = "/html/body/div[16]/div/div/div[7]/div[1]/form/div[2]/div[2]/div/div";
+        String button_selector = "#form625408054>div.t-form__inputsbox>div.tn-form__submit>button";
+
+        openPage();
+
+        SkillfactoryHomePageItem name_field_input = new SkillfactoryHomePageItem(driver);
+        WebElement item_for_test = name_field_input.getSkillfactoryHomePageItemBySelector(item_selector);
+        item_for_test.clear();
+        item_for_test.sendKeys(argument);
+
+        WebElement button_for_test = name_field_input.getSkillfactoryHomePageItemBySelector(button_selector);
+        button_for_test.click();
+
+        WebElement item_with_error = name_field_input.getSkillfactoryHomePageItemByXPath(item_selector_with_error);
+        String message = item_with_error.getText();
+
+        System.out.println(message);
+        assertFalse(message.isBlank());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"9111111111", "8121111111", "495-111-11-11", "495 111-11-11", "495 111-11-11"})
+    public void SkillfactoryHomePagePhoneFieldPositiveInputTest(String argument) {
+        String item_selector = "#input_1676828667932";
+        String item_selector_with_error = "/html/body/div[16]/div/div/div[7]/div[1]/form/div[2]/div[3]/div/div[2]";
+        String button_selector = "#form625408054>div.t-form__inputsbox>div.tn-form__submit>button";
+
+        openPage();
+
+        SkillfactoryHomePageItem name_field_input = new SkillfactoryHomePageItem(driver);
+        WebElement item_for_test = name_field_input.getSkillfactoryHomePageItemBySelector(item_selector);
+        item_for_test.clear();
+        item_for_test.sendKeys(argument);
+
+        WebElement button_for_test = name_field_input.getSkillfactoryHomePageItemBySelector(button_selector);
+        button_for_test.click();
+
+        WebElement item_with_error = name_field_input.getSkillfactoryHomePageItemByXPath(item_selector_with_error);
+        String message = item_with_error.getText();
+
+        System.out.println(message);
+        assertTrue(message.isBlank());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"", " ", "!", "a", "1111111111", "1"})
+    public void SkillfactoryHomePagePhoneFieldNegativeInputTest(String argument) {
+        String item_selector = "#input_1676828667932";
+        String item_selector_with_error = "/html/body/div[16]/div/div/div[7]/div[1]/form/div[2]/div[3]/div/div[2]";
+        String button_selector = "#form625408054>div.t-form__inputsbox>div.tn-form__submit>button";
+
+        openPage();
+
+        SkillfactoryHomePageItem name_field_input = new SkillfactoryHomePageItem(driver);
+        WebElement item_for_test = name_field_input.getSkillfactoryHomePageItemBySelector(item_selector);
+        item_for_test.clear();
+        item_for_test.sendKeys(argument);
+
+        WebElement button_for_test = name_field_input.getSkillfactoryHomePageItemBySelector(button_selector);
+        button_for_test.click();
+
+        WebElement item_with_error = name_field_input.getSkillfactoryHomePageItemByXPath(item_selector_with_error);
+        String message = item_with_error.getText();
+
+        System.out.println(message);
+        assertFalse(message.isBlank());
     }
 
     @AfterEach

@@ -12,4 +12,8 @@ public class SkillfactoryHomePageItem {
     public WebElement getSkillfactoryHomePageItemByXPath(String item_xpath) {
         return driver.findElement(By.xpath(item_xpath));
     }
+
+    public WebElement getSkillfactoryHomePageItemBySelector(String item_selector) {
+        return driver.findElement(By.cssSelector(item_selector));
+    }
 }
